@@ -1,0 +1,127 @@
+---
+title: "methylation level of sample ABLG 47592 teting data"
+output:
+  html_document:
+    df_print: paged
+---
+
+
+# Load necessary libraries
+
+```{r libraries}
+library(ggplot2)
+library(dplyr)
+```
+
+# Read the CpG methylation file
+
+```{r read_data}
+# Read the file into a data frame
+CpG_df <- read.delim("~/Sebastes/Sebastes_test_data/data/CpG_metylation_levels_bedgraph.txt", header = FALSE, comment.char = "t")
+# names on the bed file 
+#col 1. The chromosome/contig/scaffold name
+#col 2. The start coordinate
+#col 3. The end coordinate
+#col 4. The methylation percentage rounded to an integer
+#col 5. The number of alignments/pairs reporting methylated bases
+#col 6. The number of alignments/pairs reporting unmethylated bases
+
+# Assign column names (based on your earlier description)
+colnames(CpG_df) <- c("chrom", "start", "end", "methylation_percentage", "methylated_count", "unmethylated_count")
+# View the first few rows
+head(CpG_df)
+```
+
+# Editing dataframe 
+
+```{r editing_data}
+#Remove rows with missing values 
+CpG_df <- na.omit(CpG_df)
+# Remove "genome_hic_" and "_RagTag" from the 'chrom' column
+CpG_df$chrom <- gsub("genome_hic_", "", CpG_df$chrom)
+CpG_df$chrom <- gsub("_RagTag", "", CpG_df$chrom)
+```
+
+# Plot methylation percentage by chromosome
+
+```{r methylation_by_chromosome}
+# Plot methylation percentage as a scatter plot
+ggplot(CpG_df, aes(x = start, y = methylation_percentage, 
+              color = chrom)) + 
+  geom_point(alpha = 0.6, size = 1) +
+  facet_wrap(~ chrom, scales = "free_x") +
+  theme_minimal() +
+  labs(title = "Scatter plot of methylation percentage by scaffold",
+       x = "Genomic osition",y = "Methylation percentage (%)") +
+  theme(legend.position = "none")
+```
+
+# Cytosine any other base and guinine
+
+```{r CHG}
+# Read the CHG file
+CHG_df <- read.delim("~/Sebastes/Sebastes_test_data/data/CHG_methylation_levels_bedgraph.txt", header = FALSE, comment.char = "t")
+
+# Assign column names
+colnames(CHG_df) <- c("chrom", "start", "end", "methylation_percentage", "methylated_count", "unmethylated_count")
+
+# Clean chromosome names
+CHG_df$chrom <- gsub("genome_hic_", "", CHG_df$chrom)
+CHG_df$chrom <- gsub("_RagTag", "", CHG_df$chrom)
+
+# Remove rows with missing or out-of-range methylation values
+CHG_df <- CHG_df %>%
+  filter(!is.na(methylation_percentage) & methylation_percentage >= 0 & methylation_percentage <= 100)
+
+# Create scatter plot
+ggplot(CHG_df, aes(x = start, y = methylation_percentage, color = chrom)) +
+  geom_point(alpha = 0.6, size = 1) +
+  facet_wrap(~ chrom, scales = "free_x") +
+  theme_minimal() +
+  labs(title = "Scatter plot of CHG methylation percentage by chromosome",
+       x = "Genomic position",
+       y = "Methylation percentage (%)") +
+  theme(legend.position = "none")
+```
+
+# Cytosine followed by two other bases but not a guinine
+
+```{r CHH}
+# Read the CHG file
+CHH_df <- read.delim("~/Sebastes/Sebastes_test_data/data/CHH_methylation_levels_bedgraph.txt", header = FALSE, comment.char = "t")
+
+# Assign column names
+colnames(CHH_df) <- c("chrom", "start", "end", "methylation_percentage", "methylated_count", "unmethylated_count")
+
+# Clean chromosome names
+CHH_df$chrom <- gsub("genome_hic_", "", CHH_df$chrom)
+CHH_df$chrom <- gsub("_RagTag", "", CHH_df$chrom)
+
+# Remove rows with missing or out-of-range methylation values
+CHH_df <- CHH_df %>%
+  filter(!is.na(methylation_percentage) & methylation_percentage >= 0 & methylation_percentage <= 100)
+
+# Create scatter plot
+ggplot(CHH_df, aes(x = start, y = methylation_percentage, color = chrom)) +
+  geom_point(alpha = 0.6, size = 1) +
+  facet_wrap(~ chrom, scales = "free_x") +
+  theme_minimal() +
+  labs(title = "Scatter plot of CHG methylation percentage by chromosome",
+       x = "Genomic position",
+       y = "Methylation percentage (%)") +
+  theme(legend.position = "none")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
