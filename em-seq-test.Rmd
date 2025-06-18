@@ -126,6 +126,21 @@ ggsave("~/Sebastes/Sebastes_test_data/figures/CHH_methylation_plot.png", plot = 
 
 
 
+```{r}
+# Create scatter plot
+chg_plot <- ggplot(CHG_df, aes(x = start, y = methylation_percentage)) +
+  geom_point(alpha = 0.6, size = 1) +
+  #facet_wrap(~ chrom, scales = "free_x") +
+  theme_minimal() +
+  labs(title = "Scatter plot of CHG methylation by chromosome",
+       x = "Genomic position",
+       y = "Methylation percentage (%)") +
+  theme(legend.position = "none")
+# Save CHH plot
+
+```
+
+
 
 
 
