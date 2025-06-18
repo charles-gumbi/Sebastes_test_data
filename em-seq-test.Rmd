@@ -46,22 +46,25 @@ CpG_df$chrom <- gsub("_RagTag", "", CpG_df$chrom)
 
 ```{r methylation_by_chromosome}
 # Plot methylation percentage as a scatter plot
-ggplot(CpG_df, aes(x = start, y = methylation_percentage, 
+cpg_plot <- ggplot(CpG_df, aes(x = start, y = methylation_percentage, 
               color = chrom)) + 
   geom_point(alpha = 0.6, size = 1) +
   facet_wrap(~ chrom, scales = "free_x") +
   theme_minimal() +
-  labs(title = "Scatter plot of methylation percentage by scaffold",
-       x = "Genomic osition",y = "Methylation percentage (%)") +
+  labs(title = "Scatter plot for CpG methylation by scaffold",
+       x = "Genomic position",y = "Methylation percentage (%)") +
   theme(legend.position = "none")
+
+# Save CgG plot
+ggsave("~/Sebastes/Sebastes_test_data/figures/CpG_methylation_plot.png", plot = cpg_plot, width = 10, height = 6, dpi = 300)
+
 ```
 
-# Cytosine any other base and guinine
+# Cytosine followed by any other base and guinine
 
 ```{r CHG}
 # Read the CHG file
 CHG_df <- read.delim("~/Sebastes/Sebastes_test_data/data/CHG_methylation_levels_bedgraph.txt", header = FALSE, comment.char = "t")
-
 # Assign column names
 colnames(CHG_df) <- c("chrom", "start", "end", "methylation_percentage", "methylated_count", "unmethylated_count")
 
@@ -74,14 +77,16 @@ CHG_df <- CHG_df %>%
   filter(!is.na(methylation_percentage) & methylation_percentage >= 0 & methylation_percentage <= 100)
 
 # Create scatter plot
-ggplot(CHG_df, aes(x = start, y = methylation_percentage, color = chrom)) +
+chg_plot<- ggplot(CHG_df, aes(x = start, y = methylation_percentage, color = chrom)) +
   geom_point(alpha = 0.6, size = 1) +
   facet_wrap(~ chrom, scales = "free_x") +
   theme_minimal() +
-  labs(title = "Scatter plot of CHG methylation percentage by chromosome",
+  labs(title = "Scatter plot of CHG methylation by chromosome",
        x = "Genomic position",
        y = "Methylation percentage (%)") +
   theme(legend.position = "none")
+# Save CHH plot
+ggsave("~/Sebastes/Sebastes_test_data/figures/CHG_methylation_plot.png", plot = chg_plot, width = 10, height = 6, dpi = 300)
 ```
 
 # Cytosine followed by two other bases but not a guinine
@@ -102,16 +107,23 @@ CHH_df <- CHH_df %>%
   filter(!is.na(methylation_percentage) & methylation_percentage >= 0 & methylation_percentage <= 100)
 
 # Create scatter plot
-ggplot(CHH_df, aes(x = start, y = methylation_percentage, color = chrom)) +
+chh_plot <- ggplot(CHH_df, aes(x = start, y = methylation_percentage, color = chrom)) +
   geom_point(alpha = 0.6, size = 1) +
   facet_wrap(~ chrom, scales = "free_x") +
   theme_minimal() +
-  labs(title = "Scatter plot of CHG methylation percentage by chromosome",
+  labs(title = "Scatter plot of CHH methylation by chromosome",
        x = "Genomic position",
        y = "Methylation percentage (%)") +
   theme(legend.position = "none")
 
+# Save CHH plot
+ggsave("~/Sebastes/Sebastes_test_data/figures/CHH_methylation_plot.png", plot = chh_plot, width = 10, height = 6, dpi = 300)
+
 ```
+
+
+
+
 
 
 
