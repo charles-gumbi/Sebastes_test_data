@@ -175,7 +175,30 @@ for (chr_name in chromosomes) {
 }
 ```
 
+# Sebsetting control 
 
+```{r subset puc19}
+# Subset the data
+pcu19 <- subset(mbias_data, chr == "plasmid_puc19c" & context == "CpG")
+
+# 
+pcu19_plot<- ggplot(pcu19, aes(x = Position, y = methPerc, color = context, linetype = strand)) +
+    geom_line() +
+    labs(
+      title = paste("Mbias Plot for", chr_name),
+      x = "Read Position",
+      y = "Methylation Percentage"
+    ) +
+    theme_minimal()
+  
+  # Save plot
+  ggsave(filename = paste0("mbias_plot_", chr_name, ".png"), plot = p, width = 10, height = 6)
+
+# View the first few rows
+head(pcu19)
+
+
+```
 
 
 
