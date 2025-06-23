@@ -1,16 +1,21 @@
 ---
 title: "methylation level of sample ABLG 47592 teting data"
+author: "charles-gumbi"
+date: "2025-06-18"
 output:
   html_document:
     df_print: paged
 ---
-
 
 # Load necessary libraries
 
 ```{r libraries}
 library(ggplot2)
 library(dplyr)
+library(ggplot2)
+library(dplyr)
+library(readr)
+
 ```
 
 # Read the CpG methylation file
@@ -122,11 +127,9 @@ ggsave("~/Sebastes/Sebastes_test_data/figures/CHH_methylation_plot.png", plot = 
 ```
 
 
+# CpG methylation across the genome 
 
-
-
-
-```{r}
+```{r cpg_genome}
 # Create scatter plot
 chg_plot <- ggplot(CHG_df, aes(x = start, y = methylation_percentage)) +
   geom_point(alpha = 0.6, size = 1) +
@@ -141,11 +144,36 @@ chg_plot <- ggplot(CHG_df, aes(x = start, y = methylation_percentage)) +
 ```
 
 
+# Methylation bias on controls 
 
+```{r mbias_plot}
+# Load the data
+mbias_data <- read_tsv("~/Sebastes/Sebastes_test_data/data/ABLG_47592_controls_combined_mbias.tsv")
 
+# Calculate methylation percentage
+mbias_data <- mbias_data %>%
+  mutate(methPerc = 1 * nMethylated / (nMethylated + nUnmethylated))
 
+# Get unique chromosomes
+chromosomes <- unique(mbias_data$chr)
 
-
+# Loop through each chromosome and plot
+for (chr_name in chromosomes) {
+  chr_data <- mbias_data %>% filter(chr == chr_name)
+  
+  p <- ggplot(chr_data, aes(x = Position, y = methPerc, color = context, linetype = strand)) +
+    geom_line() +
+    labs(
+      title = paste("Mbias Plot for", chr_name),
+      x = "Read Position",
+      y = "Methylation Percentage"
+    ) +
+    theme_minimal()
+  
+  # Save plot
+  ggsave(filename = paste0("mbias_plot_", chr_name, ".png"), plot = p, width = 10, height = 6)
+}
+```
 
 
 
