@@ -15,7 +15,6 @@ library(dplyr)
 library(ggplot2)
 library(dplyr)
 library(readr)
-
 ```
 
 # Read the CpG methylation file
@@ -146,60 +145,66 @@ chg_plot <- ggplot(CHG_df, aes(x = start, y = methylation_percentage)) +
 
 # Methylation bias on controls 
 
-```{r mbias_plot}
+```{r mbias_data}
 # Load the data
 mbias_data <- read_tsv("~/Sebastes/Sebastes_test_data/data/ABLG_47592_controls_combined_mbias.tsv")
-
-# Calculate methylation percentage
-mbias_data <- mbias_data %>%
-  mutate(methPerc = 1 * nMethylated / (nMethylated + nUnmethylated))
-
-# Get unique chromosomes
-chromosomes <- unique(mbias_data$chr)
-
-# Loop through each chromosome and plot
-for (chr_name in chromosomes) {
-  chr_data <- mbias_data %>% filter(chr == chr_name)
-  
-  p <- ggplot(chr_data, aes(x = Position, y = methPerc, color = context, linetype = strand)) +
-    geom_line() +
-    labs(
-      title = paste("Mbias Plot for", chr_name),
-      x = "Read Position",
-      y = "Methylation Percentage"
-    ) +
-    theme_minimal()
-  
-  # Save plot
-  ggsave(filename = paste0("mbias_plot_", chr_name, ".png"), plot = p, width = 10, height = 6)
-}
 ```
 
-# Sebsetting control 
+# Sebsetting puc19 (positive control) 
 
-```{r subset puc19}
+```{r subsetting_puc19_data}
 # Subset the data
 pcu19 <- subset(mbias_data, chr == "plasmid_puc19c" & context == "CpG")
 
-# 
-pcu19_plot<- ggplot(pcu19, aes(x = Position, y = methPerc, color = context, linetype = strand)) +
+# Calculate methylation percentage
+pcu19 <- pcu19 %>%
+  mutate(methPerc = 100 * nMethylated / (nMethylated + nUnmethylated))
+
+# Average methylation
+mean(pcu19$methPerc, na.rm = TRUE)
+#[1] 38.42835
+
+# Plot pcu19 data
+pcu19_plot <- ggplot(pcu19, aes(x = Position, y = methPerc, color = context, linetype = strand)) +
     geom_line() +
     labs(
-      title = paste("Mbias Plot for", chr_name),
+      title = paste("Mbias plot for pcu19-positve control"),
       x = "Read Position",
-      y = "Methylation Percentage"
-    ) +
+      y = "Methylation perc (%)") +
     theme_minimal()
   
-  # Save plot
-  ggsave(filename = paste0("mbias_plot_", chr_name, ".png"), plot = p, width = 10, height = 6)
-
-# View the first few rows
-head(pcu19)
-
+# Save puc19 mbias plot
+ggsave("~/Sebastes/Sebastes_test_data/figures/pcu19_mbias.png", plot = pcu19_plot, width = 10, height = 6, dpi = 300)
 
 ```
 
+# Sebsetting lamda control (negative control)
+
+```{r subseting_lambda_data}
+#Subset the data
+lambda <- subset(mbias_data, chr == "phage_lambda" & context == "CpG")
+
+# Calculate methylation percentage
+lambda <- lambda %>%
+  mutate(methPerc = 1 * nMethylated / (nMethylated + nUnmethylated))
+
+# Average methylation
+mean(lambda$methPerc, na.rm = TRUE)
+#[1]0.4150602
+
+# Plot lambda data
+lambda_plot <- ggplot(lambda, aes(x = Position, y = methPerc, color = context, linetype = strand)) +
+    geom_line() +
+    labs(
+      title = paste("Mbias Plot for lambda-negetive control"),
+      x = "Read Position",
+      y = "Methylation perc (%)"
+    ) +
+    theme_minimal()
+  
+# Save lanbda mbias plot
+ggsave("~/Sebastes/Sebastes_test_data/figures/lambda_mbias.png", plot = lambda_plot, width = 10, height = 6, dpi = 300)
+```
 
 
 
