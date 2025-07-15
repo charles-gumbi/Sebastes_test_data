@@ -208,3 +208,41 @@ ggsave("~/Sebastes/Sebastes_test_data/figures/lambda_mbias.png", plot = lambda_p
 
 
 
+# Positive control 
+
+```{r positive_control}
+# Read the file into a data frame
+positive_df <- read.delim("~/Sebastes/Sebastes_test_data/data/positive_control.sorted_CpG.bedGraph", header = FALSE, comment.char = "t")
+# names on the bed file 
+#col 1. The chromosome/contig/scaffold name
+#col 2. The start coordinate
+#col 3. The end coordinate
+#col 4. The methylation percentage rounded to an integer
+#col 5. The number of alignments/pairs reporting methylated bases
+#col 6. The number of alignments/pairs reporting unmethylated bases
+
+# Assign column names (based on your earlier description)
+colnames(positive_df) <- c("chrom", "start", "end", "methylation_percentage", "methylated_count", "unmethylated_count")
+# View the first few rows
+head(positive_df)
+
+# Calculate methylation percentage
+positive_df <- positive_df %>%
+  mutate(methPerc = 100 * methylated_count / (methylated_count + unmethylated_count))
+
+# Plot lambda data
+
+positive_ctrl_plot <- ggplot(positive_df, aes(x = start, y = methPerc)) +
+    geom_line() +
+    labs(
+      title = paste("Mbias Plot for puc19c-positive control"),
+      x = "Read Position",
+      y = "Methylation perc (%)"
+    ) +
+    theme_minimal()
+  
+# Save lanbda mbias plot
+#ggsave("~/Sebastes/Sebastes_test_data/figures/lambda_mbias.png", plot = lambda_plot, width = 10, height = 6, dpi = 300)
+```
+
+
