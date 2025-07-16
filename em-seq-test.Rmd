@@ -148,13 +148,15 @@ chg_plot <- ggplot(CHG_df, aes(x = start, y = methylation_percentage)) +
 ```{r mbias_data}
 # Load the data
 mbias_data <- read_tsv("~/Sebastes/Sebastes_test_data/data/ABLG_47592_controls_combined_mbias.tsv")
+all_mbias_data <- read_tsv("~/Sebastes/Sebastes_test_data/data/ABLG-47592_1_combined_mbias.tsv")
+
 ```
 
 # Sebsetting puc19 (positive control) 
 
 ```{r subsetting_puc19_data}
 # Subset the data
-pcu19 <- subset(mbias_data, chr == "plasmid_puc19c" & context == "CpG")
+pcu19 <- subset(all_mbias_data, chr == "plasmid_puc19c" & context == "CpG")
 
 # Calculate methylation percentage
 pcu19 <- pcu19 %>%
@@ -182,7 +184,7 @@ ggsave("~/Sebastes/Sebastes_test_data/figures/pcu19_mbias.png", plot = pcu19_plo
 
 ```{r subseting_lambda_data}
 #Subset the data
-lambda <- subset(mbias_data, chr == "phage_lambda" & context == "CpG")
+lambda <- subset(all_mbias_data, chr == "phage_lambda" & context == "CpG")
 
 # Calculate methylation percentage
 lambda <- lambda %>%
