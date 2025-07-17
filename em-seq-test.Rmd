@@ -148,7 +148,8 @@ chg_plot <- ggplot(CHG_df, aes(x = start, y = methylation_percentage)) +
 ```{r mbias_data}
 # Load the data
 mbias_data <- read_tsv("~/Sebastes/Sebastes_test_data/data/ABLG_47592_controls_combined_mbias.tsv")
-all_mbias_data <- read_tsv("~/Sebastes/Sebastes_test_data/data/ABLG-47592_1_combined_mbias.tsv")
+all_mbias_data <- read_tsv("~/Sebastes/Sebastes_test_data/data/ABLG-47592_1_combined_composite_mbias.tsv")
+controls_mbias <- read_tsv("~/Sebastes/Sebastes_test_data/data/ABLG-47592_1_combined_control_mbias.tsv")
 
 ```
 
@@ -156,7 +157,7 @@ all_mbias_data <- read_tsv("~/Sebastes/Sebastes_test_data/data/ABLG-47592_1_comb
 
 ```{r subsetting_puc19_data}
 # Subset the data
-pcu19 <- subset(all_mbias_data, chr == "plasmid_puc19c" & context == "CpG")
+pcu19 <- subset(controls_mbias, chr == "plasmid_puc19c" & context == "CpG")
 
 # Calculate methylation percentage
 pcu19 <- pcu19 %>%
@@ -184,11 +185,11 @@ ggsave("~/Sebastes/Sebastes_test_data/figures/pcu19_mbias.png", plot = pcu19_plo
 
 ```{r subseting_lambda_data}
 #Subset the data
-lambda <- subset(all_mbias_data, chr == "phage_lambda" & context == "CpG")
+lambda <- subset(controls_mbias, chr == "phage_lambda" & context == "CpG")
 
 # Calculate methylation percentage
 lambda <- lambda %>%
-  mutate(methPerc = 1 * nMethylated / (nMethylated + nUnmethylated))
+  mutate(methPerc = 100 * nMethylated / (nMethylated + nUnmethylated))
 
 # Average methylation
 mean(lambda$methPerc, na.rm = TRUE)
@@ -247,4 +248,28 @@ positive_ctrl_plot <- ggplot(positive_df, aes(x = start, y = methPerc)) +
 #ggsave("~/Sebastes/Sebastes_test_data/figures/lambda_mbias.png", plot = lambda_plot, width = 10, height = 6, dpi = 300)
 ```
 
+## CpG on the composite aligned genome
+
+```{r}
+#Subset the data
+com_cpgs <- subset(all_mbias_data, context == "CpG")
+
+# Calculate methylation percentage
+com_cpgs <- com_cpgs %>%
+  mutate(methPerc = 100 * nMethylated / (nMethylated + nUnmethylated))
+
+# Average methylation
+mean(com_cpgs$methPerc, na.rm = TRUE)
+#[1]0.4150602
+
+# Plot lambda data
+comcpg_plot <- ggplot(com_cpgs, aes(x = Position, y = methPerc, color = context, linetype = strand)) +
+    geom_line() +
+    labs(
+      title = paste("Mbias Plot for ABLG 47952aligned to a composite genome"),
+      x = "Read Position",
+      y = "Methylation perc (%)"
+    ) +
+    theme_minimal()
+```
 
